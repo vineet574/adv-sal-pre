@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Predictor</title>
+    <style>
+        /* Simple CSS for the form */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, select {
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #predictionResult {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Salary Prediction</h1>
+        <form id="salaryForm">
+            <label for="jobTitle">Job Title:</label>
+            <input type="text" id="jobTitle" name="jobTitle" required>
+
+            <label for="jobCategory">Job Category:</label>
+            <input type="text" id="jobCategory" name="jobCategory" required>
+
+            <label for="experienceLevel">Experience Level:</label>
+            <select id="experienceLevel" name="experienceLevel">
+                <option value="Entry-level">Entry-level</option>
+                <option value="Mid-level">Mid-level</option>
+                <option value="Senior">Senior</option>
+                <option value="Executive">Executive</option>
+            </select>
+
+            <label for="companyLocation">Company Location:</label>
+            <input type="text" id="companyLocation" name="companyLocation" required>
+
+            <button type="submit">Predict Salary</button>
+        </form>
+
+        <h2>Predicted Salary: <span id="predictionResult"></span></h2>
+    </div>
+
+    <script>
+        // JavaScript functionality
+        document.getElementById('salaryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form data
+            const jobTitle = document.getElementById('jobTitle').value;
+            const jobCategory = document.getElementById('jobCategory').value;
+            const experienceLevel = document.getElementById('experienceLevel').value;
+            const companyLocation = document.getElementById('companyLocation').value;
+
+            // Prepare the data in the format the backend expects
+            const formData = {
+                job_title: jobTitle,
+                job_category: jobCategory,
+                experience_level: experienceLevel,
+                company_location: companyLocation
+            };
+
+            // Send the data to the backend
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the predicted salary
+                document.getElementById('predictionResult').innerText = '$' + data.predicted_salary.toFixed(2);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+
